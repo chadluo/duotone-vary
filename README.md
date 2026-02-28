@@ -1,26 +1,32 @@
 # Duotone Vary
 
-Duotone Vary is a vscode extension to generate color themes. This extension takes two tone colors and generate colors
-for the full color scheme in editor.
+A replicate of [Duotone color theme](https://github.com/simurai/duotone-dark-syntax) for Atom editor, where you can
+choose two color tones and the extension will generate the full color scheme from them.
 
-Inspirations:
+Color theme inspired by [I am sorry, but everyone is getting syntax highlighting
+wrong](https://tonsky.me/blog/syntax-highlighting/) and only some tokens are colored.
 
-- [Duotone Dark Syntax](https://github.com/simurai/duotone-dark-syntax)
-- [I am sorry, but everyone is getting syntax highlighting wrong](https://tonsky.me/blog/syntax-highlighting/)
+## Usage
 
-## Logic
+> [!NOTE]
+>
+> Upon installation, in addition to the uno/duo colors, the extension 👉 **will also change** 👈 the following derived
+> vscode settings, please backup before use:
+>
+> ```json5
+> {
+>     // provide fallback colors
+>     "workbench.preferredDarkColorTheme": "Duotone Vary Dark",
+>     "workbench.preferredLightColorTheme": "Duotone Vary Light",
+>     // editor syntax highlight colors
+>     "editor.tokenColorCustomizations": {},
+>     // editor window colors
+>     "workbench.colorCustomizations": {},
+> }
+> ```
+>
+> see [writer.ts](./src/writer.ts)
 
-This extension exposes settings for the base tone colors ('Uno' and 'Duo'), generates additional colors from the two
-base colors in OKLCH color space, and modify vscode settings in `workbench.colorCustomizations` to override the colors.
-
-The base Uno and Duo colors are supposed to be the brightest colors in the colorscheme, and the generated colors should
-decrease in saturation and becoming more and more neutral. For code syntax highlight, the extension should generate 4
-additional shades for Uno and 2 for Duo, in total 8 colors.
-
-For the tone color setting item, the extension should accept either CSS OKLCH color notations (e.g. `oklch(0.45 0.26
-264);`) or hex RGB notations (`#ca0000`). While generating other colors, the extension should convert colors to OKLCH
-color spaces if not yet, and try to keep colors in the same hue so that the tone is reserved.
-
-The extension should respect `vscode.window.activeColorTheme.kind` to determine whether the current theme is light or
-dark, and make sure the colors have adequate contrast. Assume #FFFFFF for light background and #0D1117 for dark
-background.
+1. install
+2. customize colors in settings, can pick OKLCH colors from [OKLCH Color Picker & Converter](https://oklch.com/)
+3. win

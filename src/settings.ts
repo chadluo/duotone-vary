@@ -10,13 +10,15 @@ export function parseColor(input: string): Color {
 
 export function readSettings(): ExtensionSettings | null {
 	const config = vscode.workspace.getConfiguration('duotone-vary');
-	const unoColor = config.get<string>('unoColor', '');
-	const duoColor = config.get<string>('duoColor', '');
+	const darkUnoColor = config.get<string>('darkUnoColor', '');
+	const darkDuoColor = config.get<string>('darkDuoColor', '');
+	const lightUnoColor = config.get<string>('lightUnoColor', '');
+	const lightDuoColor = config.get<string>('lightDuoColor', '');
 	const settingsTarget = config.get<'user' | 'workspace'>('settingsTarget', 'user');
 
-	if (!unoColor || !duoColor) {
+	if ((!darkUnoColor || !darkDuoColor) && (!lightUnoColor || !lightDuoColor)) {
 		return null;
 	}
 
-	return { unoColor, duoColor, settingsTarget };
+	return { darkUnoColor, darkDuoColor, lightUnoColor, lightDuoColor, settingsTarget };
 }

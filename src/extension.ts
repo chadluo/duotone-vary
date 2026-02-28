@@ -29,18 +29,25 @@ async function regenerate(): Promise<void> {
 		return;
 	}
 
+	const kind = detectThemeKind();
+	const unoRaw = kind === 'dark' ? settings.darkUnoColor : settings.lightUnoColor;
+	const duoRaw = kind === 'dark' ? settings.darkDuoColor : settings.lightDuoColor;
+
+	if (!unoRaw || !duoRaw) {
+		return;
+	}
+
 	let uno: Color;
 	let duo: Color;
 	try {
-		uno = parseColor(settings.unoColor);
-		duo = parseColor(settings.duoColor);
+		uno = parseColor(unoRaw);
+		duo = parseColor(duoRaw);
 	} catch (e) {
 		const msg = e instanceof Error ? e.message : String(e);
 		vscode.window.showErrorMessage(`Duotone Vary: Invalid color — ${msg}`);
 		return;
 	}
 
-	const kind = detectThemeKind();
 	const palette = generatePalette(uno, duo, kind);
 	await applyPalette(palette, kind, settings.settingsTarget);
 }

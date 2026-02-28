@@ -35,17 +35,8 @@
     "configuration": {
       "title": "Duotone Vary",
       "properties": {
-        "duotone-vary.unoColor": {
-          "type": "string",
-          "default": "",
-          "markdownDescription": "Primary (Uno) color. Accepts CSS OKLCH (`oklch(0.55 0.20 264)`) or hex RGB (`#4a90d9`)."
-        },
-        "duotone-vary.duoColor": {
-          "type": "string",
-          "default": "",
-          "markdownDescription": "Secondary/accent (Duo) color. Accepts CSS OKLCH or hex RGB."
-        },
         "duotone-vary.settingsTarget": {
+          "order": 0,
           "type": "string",
           "enum": [
             "user",
@@ -57,6 +48,30 @@
           ],
           "default": "user",
           "description": "Where to write the generated color customizations."
+        },
+        "duotone-vary.darkUnoColor": {
+          "order": 1,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Dark theme primary (Uno) color. Accepts CSS OKLCH (`oklch(0.55 0.20 264)`) or hex RGB (`#4a90d9`)."
+        },
+        "duotone-vary.darkDuoColor": {
+          "order": 2,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Dark theme secondary/accent (Duo) color. Accepts CSS OKLCH or hex RGB."
+        },
+        "duotone-vary.lightUnoColor": {
+          "order": 3,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Light theme primary (Uno) color. Accepts CSS OKLCH (`oklch(0.55 0.20 264)`) or hex RGB (`#4a90d9`)."
+        },
+        "duotone-vary.lightDuoColor": {
+          "order": 4,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Light theme secondary/accent (Duo) color. Accepts CSS OKLCH or hex RGB."
         }
       }
     }

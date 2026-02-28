@@ -38,4 +38,8 @@ export async function applyPalette(
 		...buildWorkbenchColors(palette, kind),
 	};
 	await config.update('workbench.colorCustomizations', workbenchColors, configTarget);
+
+	// Set preferred color themes so auto dark/light mode picks up Duotone Vary
+	await config.update('workbench.preferredDarkColorTheme', 'Duotone Vary Dark', configTarget);
+	await config.update('workbench.preferredLightColorTheme', 'Duotone Vary Light', configTarget);
 }

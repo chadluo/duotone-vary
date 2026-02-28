@@ -6,8 +6,10 @@ export interface PaletteHex {
 }
 
 export interface ExtensionSettings {
-	unoColor: string;
-	duoColor: string;
+	darkUnoColor: string;
+	darkDuoColor: string;
+	lightUnoColor: string;
+	lightDuoColor: string;
 	settingsTarget: 'user' | 'workspace';
 }
 
