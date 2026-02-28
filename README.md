@@ -1,71 +1,26 @@
-# duotone-vary README
+# Duotone Vary
 
-This is the README for your extension "duotone-vary". After writing up a brief description, we recommend including the following sections.
+Duotone Vary is a vscode extension to generate color themes. This extension takes two tone colors and generate colors
+for the full color scheme in editor.
 
-## Features
+Inspirations:
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- [Duotone Dark Syntax](https://github.com/simurai/duotone-dark-syntax)
+- [I am sorry, but everyone is getting syntax highlighting wrong](https://tonsky.me/blog/syntax-highlighting/)
 
-For example if there is an image subfolder under your extension project workspace:
+## Logic
 
-\!\[feature X\]\(images/feature-x.png\)
+This extension exposes settings for the base tone colors ('Uno' and 'Duo'), generates additional colors from the two
+base colors in OKLCH color space, and modify vscode settings in `workbench.colorCustomizations` to override the colors.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+The base Uno and Duo colors are supposed to be the brightest colors in the colorscheme, and the generated colors should
+decrease in saturation and becoming more and more neutral. For code syntax highlight, the extension should generate 4
+additional shades for Uno and 2 for Duo, in total 8 colors.
 
-## Requirements
+For the tone color setting item, the extension should accept either CSS OKLCH color notations (e.g. `oklch(0.45 0.26
+264);`) or hex RGB notations (`#ca0000`). While generating other colors, the extension should convert colors to OKLCH
+color spaces if not yet, and try to keep colors in the same hue so that the tone is reserved.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+The extension should respect `vscode.window.activeColorTheme.kind` to determine whether the current theme is light or
+dark, and make sure the colors have adequate contrast. Assume #FFFFFF for light background and #0D1117 for dark
+background.

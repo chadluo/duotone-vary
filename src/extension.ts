@@ -1,26 +1,78 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+// @ts-expect-error TS1479: colorjs.io is ESM-only; esbuild handles bundling
+import Color from 'colorjs.io';
 import * as vscode from 'vscode';
+import { generatePalette } from './colors.js';
+import { parseColor, readSettings } from './settings.js';
+import type { ThemeKind } from './types.js';
+import { applyPalette } from './writer.js';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "duotone-vary" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('duotone-vary.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Duotone Vary!');
-	});
-
-	context.subscriptions.push(disposable);
+function detectThemeKind(): ThemeKind {
+	const kind = vscode.window.activeColorTheme.kind;
+	return (kind === vscode.ColorThemeKind.Light || kind === vscode.ColorThemeKind.HighContrastLight)
+		? 'light'
+		: 'dark';
 }
 
-// This method is called when your extension is deactivated
+function debounce<T extends (...args: never[]) => void>(fn: T, ms: number): T {
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	return ((...args: Parameters<T>) => {
+		if (timer) {
+			clearTimeout(timer);
+		}
+		timer = setTimeout(() => fn(...args), ms);
+	}) as unknown as T;
+}
+
+async function regenerate(): Promise<void> {
+	const settings = readSettings();
+	if (!settings) {
+		return;
+	}
+
+	let uno: Color;
+	let duo: Color;
+	try {
+		uno = parseColor(settings.unoColor);
+		duo = parseColor(settings.duoColor);
+	} catch (e) {
+		const msg = e instanceof Error ? e.message : String(e);
+		vscode.window.showErrorMessage(`Duotone Vary: Invalid color — ${msg}`);
+		return;
+	}
+
+	const kind = detectThemeKind();
+	const palette = generatePalette(uno, duo, kind);
+	await applyPalette(palette, kind, settings.settingsTarget);
+}
+
+const debouncedRegenerate = debounce(() => { void regenerate(); }, 200);
+
+export function activate(context: vscode.ExtensionContext) {
+	// Apply on startup
+	void regenerate();
+
+	// Re-apply when settings change
+	context.subscriptions.push(
+		vscode.workspace.onDidChangeConfiguration((e) => {
+			if (e.affectsConfiguration('duotone-vary')) {
+				debouncedRegenerate();
+			}
+		}),
+	);
+
+	// Re-apply when theme kind changes (light ↔ dark)
+	context.subscriptions.push(
+		vscode.window.onDidChangeActiveColorTheme(() => {
+			debouncedRegenerate();
+		}),
+	);
+
+	// Manual regenerate command
+	context.subscriptions.push(
+		vscode.commands.registerCommand('duotone-vary.regenerate', () => {
+			void regenerate();
+		}),
+	);
+}
+
 export function deactivate() {}

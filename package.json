@@ -9,15 +9,57 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "duotone-vary.helloWorld",
-        "title": "Hello World"
+        "command": "duotone-vary.regenerate",
+        "title": "Duotone Vary: Regenerate Colors"
       }
-    ]
+    ],
+    "themes": [
+      {
+        "label": "Duotone Vary Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/duotone-vary-dark.json"
+      },
+      {
+        "label": "Duotone Vary Light",
+        "uiTheme": "vs",
+        "path": "./themes/duotone-vary-light.json"
+      }
+    ],
+    "configuration": {
+      "title": "Duotone Vary",
+      "properties": {
+        "duotone-vary.unoColor": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Primary (Uno) color. Accepts CSS OKLCH (`oklch(0.55 0.20 264)`) or hex RGB (`#4a90d9`)."
+        },
+        "duotone-vary.duoColor": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Secondary/accent (Duo) color. Accepts CSS OKLCH or hex RGB."
+        },
+        "duotone-vary.settingsTarget": {
+          "type": "string",
+          "enum": [
+            "user",
+            "workspace"
+          ],
+          "enumDescriptions": [
+            "Write color customizations to user settings",
+            "Write color customizations to workspace settings"
+          ],
+          "default": "user",
+          "description": "Where to write the generated color customizations."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
@@ -34,15 +76,18 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.109.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "typescript-eslint": "^8.54.0",
-    "eslint": "^9.39.2",
+    "@types/vscode": "^1.109.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "esbuild": "^0.27.2",
+    "eslint": "^9.39.2",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.54.0"
+  },
+  "dependencies": {
+    "colorjs.io": "^0.6.1"
   }
 }

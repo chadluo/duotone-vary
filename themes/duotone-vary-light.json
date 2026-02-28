@@ -1,0 +1,40 @@
+{
+	"name": "Duotone Vary Light",
+	"type": "light",
+	"colors": {
+		"editor.background": "#FFFFFF",
+		"editor.foreground": "#24292f",
+		"editorLineNumber.foreground": "#8c959f",
+		"editorLineNumber.activeForeground": "#24292f",
+		"editorCursor.foreground": "#24292f",
+		"editor.selectionBackground": "#b6d4fe",
+		"editor.lineHighlightBackground": "#f6f8fa",
+		"sideBar.background": "#f6f8fa",
+		"sideBar.foreground": "#24292f",
+		"sideBarTitle.foreground": "#24292f",
+		"sideBarSectionHeader.background": "#eaeef2",
+		"activityBar.background": "#FFFFFF",
+		"activityBar.foreground": "#24292f",
+		"titleBar.activeBackground": "#FFFFFF",
+		"titleBar.activeForeground": "#24292f",
+		"statusBar.background": "#FFFFFF",
+		"statusBar.foreground": "#57606a",
+		"tab.activeBackground": "#FFFFFF",
+		"tab.activeForeground": "#24292f",
+		"tab.inactiveBackground": "#f6f8fa",
+		"tab.inactiveForeground": "#57606a",
+		"panel.background": "#FFFFFF",
+		"panel.border": "#d0d7de",
+		"terminal.foreground": "#24292f",
+		"list.activeSelectionBackground": "#b6d4fe",
+		"list.hoverBackground": "#f6f8fa"
+	},
+	"tokenColors": [
+		{
+			"scope": "",
+			"settings": {
+				"foreground": "#24292f"
+			}
+		}
+	]
+}
