@@ -1,82 +1,79 @@
+/*
+
+Color calculation logic coming from Duotone Syntax by simurai
+
+see https://github.com/simurai/duotone-dark-syntax/blob/master/lib/duotone.coffee
+see https://github.com/simurai/duotone-light-syntax/blob/master/lib/duotone.coffee
+
+*/
+
 // @ts-expect-error TS1479: colorjs.io is ESM-only; esbuild handles bundling
 import Color from 'colorjs.io';
 import type { PaletteHex, ThemeKind } from './types.js';
 
-const BG_DARK = new Color('#0D1117');
-const BG_LIGHT = new Color('#FFFFFF');
-const MIN_CONTRAST = 3.0;
-
-function bgForKind(kind: ThemeKind): Color {
-	return kind === 'dark' ? BG_DARK : BG_LIGHT;
-}
+// Endpoint colors matching the original duotone themes
+const DARK_WHITE = new Color('hsl', [250, 0, 100]);
+const DARK_BG = new Color('hsl', [250, 12, 18]);
+const LIGHT_BLACK = new Color('hsl', [30, 0, 0]);
+const LIGHT_BG = new Color('hsl', [30, 16, 98]);
 
 function toHex(c: Color): string {
 	return c.to('srgb').toString({ format: 'hex' });
 }
 
-export function ensureContrast(color: Color, kind: ThemeKind): Color {
-	const bg = bgForKind(kind);
-	const result = color.clone();
-	const direction = kind === 'dark' ? 1 : -1; // increase L for dark, decrease for light
+/** Mix two colors in Lab space (chroma.js default). */
+function mix(a: Color, b: Color, ratio: number): Color {
+	return a.mix(b, ratio, { space: 'lab' });
+}
 
-	let ratio = bg.contrastWCAG21(result);
-	if (ratio >= MIN_CONTRAST) {
-		return result;
+/**
+ * Linearly interpolate through anchor colors to produce `count` evenly-spaced stops.
+ * Replicates `chroma.scale([...anchors]).colors(count)`.
+ */
+function scale(anchors: Color[], count: number): Color[] {
+	if (count === 1) {
+		return [anchors[0].clone()];
 	}
-
-	// Binary search lightness to meet contrast
-	const currentL = result.oklch.l ?? 0.5;
-	let lo = kind === 'dark' ? currentL : 0;
-	let hi = kind === 'dark' ? 1 : currentL;
-
-	for (let i = 0; i < 20 && ratio < MIN_CONTRAST; i++) {
-		const mid = (lo + hi) / 2;
-		result.set('oklch.l', mid);
-
-		ratio = bg.contrastWCAG21(result);
-		if (ratio < MIN_CONTRAST) {
-			if (direction > 0) {
-				lo = mid;
-			} else {
-				hi = mid;
-			}
-		} else {
-			// Found a valid L, try to get closer to original
-			if (direction > 0) {
-				hi = mid;
-			} else {
-				lo = mid;
-			}
-		}
+	const segments = anchors.length - 1;
+	const result: Color[] = [];
+	for (let i = 0; i < count; i++) {
+		const t = i / (count - 1); // 0..1
+		const pos = t * segments; // position along anchor array
+		const seg = Math.min(Math.floor(pos), segments - 1);
+		const local = pos - seg; // 0..1 within segment
+		result.push(mix(anchors[seg], anchors[seg + 1], local));
 	}
-
 	return result;
 }
 
-export function generateShades(base: Color, count: number, kind: ThemeKind): Color[] {
-	const oklch = base.to('oklch');
-	const baseC = oklch.c ?? 0;
-	const baseH = oklch.h ?? 0;
-	const baseL = oklch.l ?? 0.5;
+export function generatePalette(uno: Color, duo: Color, kind: ThemeKind): PaletteHex {
+	let unoColors: Color[];
+	let duoColors: Color[];
 
-	const shades: Color[] = [];
+	if (kind === 'dark') {
+		const unoHigh = mix(uno, DARK_WHITE, 0.5);
+		const unoMid = uno;
+		const unoLow = mix(uno, DARK_BG, 0.75);
+		unoColors = scale([unoHigh, unoMid, unoLow], 5);
 
-	for (let i = 0; i < count; i++) {
-		const factor = i === count - 1 ? 0 : 1 - Math.sqrt(i / (count - 1));
-		const c = new Color('oklch', [baseL, baseC * factor, i === count - 1 ? 0 : baseH]);
-		c.toGamut({ space: 'srgb' });
-		shades.push(ensureContrast(c, kind));
+		const duoHigh = duo;
+		const duoLow = mix(duo, DARK_BG, 0.66);
+		duoColors = scale([duoHigh, duoLow], 3);
+	} else {
+		const unoHigh = mix(uno, LIGHT_BLACK, 0.3);
+		const unoMid = uno;
+		const unoLow = mix(uno, LIGHT_BG, 0.6);
+		unoColors = scale([unoHigh, unoMid, unoLow], 5);
+
+		const duoHigh = mix(duo, LIGHT_BLACK, 0.5);
+		const duoMid = duo;
+		const duoLow = mix(duo, LIGHT_BG, 0.6);
+		const duoFull = scale([duoHigh, duoMid, duoLow], 5);
+		duoColors = [duoFull[1], duoFull[2], duoFull[3]];
 	}
 
-	return shades;
-}
-
-export function generatePalette(uno: Color, duo: Color, kind: ThemeKind): PaletteHex {
-	const unoShades = generateShades(uno, 5, kind);
-	const duoShades = generateShades(duo, 3, kind);
-
 	return {
-		uno: unoShades.map(toHex) as PaletteHex['uno'],
-		duo: duoShades.map(toHex) as PaletteHex['duo'],
+		uno: unoColors.map(toHex) as PaletteHex['uno'],
+		duo: duoColors.map(toHex) as PaletteHex['duo'],
 	};
 }
