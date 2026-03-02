@@ -18,6 +18,10 @@ export async function applyPalette(
 	// Strip JS-style comments before parsing (theme files use JSONC)
 	const theme = JSON.parse(raw.replace(/^\s*\/\/.*$/gm, ''));
 
+	theme._palette = {
+		uno: palette.uno,
+		duo: palette.duo,
+	};
 	theme.tokenColors = buildTokenColors(palette);
 	theme.colors = {
 		...theme.colors,
