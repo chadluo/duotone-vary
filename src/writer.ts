@@ -16,7 +16,9 @@ export async function applyPalette(
 	const themePath = path.join(extensionPath, 'themes', themeFiles[kind]);
 	const raw = await fs.promises.readFile(themePath, 'utf-8');
 	// Strip JS-style comments before parsing (theme files use JSONC)
-	const theme = JSON.parse(raw.replace(/^\s*\/\/.*$/gm, ''));
+	const theme = JSON.parse(
+		raw.replace(/^\s*\/\/.*$/gm, '').replace(/,(\s*[}\]])/g, '$1'),
+	);
 
 	theme._palette = {
 		uno: palette.uno,
