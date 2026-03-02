@@ -3,15 +3,8 @@ import Color from 'colorjs.io';
 import * as vscode from 'vscode';
 import { generatePalette } from './colors.js';
 import { parseColor, readSettings } from './settings.js';
-import type { ThemeKind } from './types.js';
-import { applyPalette } from './writer.js';
 
-function detectThemeKind(): ThemeKind {
-	const kind = vscode.window.activeColorTheme.kind;
-	return (kind === vscode.ColorThemeKind.Light || kind === vscode.ColorThemeKind.HighContrastLight)
-		? 'light'
-		: 'dark';
-}
+import { applyPalette } from './writer.js';
 
 function debounce<T extends (...args: never[]) => void>(fn: T, ms: number): T {
 	let timer: ReturnType<typeof setTimeout> | undefined;
@@ -23,40 +16,42 @@ function debounce<T extends (...args: never[]) => void>(fn: T, ms: number): T {
 	}) as unknown as T;
 }
 
-async function regenerate(): Promise<void> {
+async function regenerate(extensionPath: string): Promise<void> {
 	const settings = readSettings();
 	if (!settings) {
 		return;
 	}
 
-	const kind = detectThemeKind();
-	const unoRaw = kind === 'dark' ? settings.darkUnoColor : settings.lightUnoColor;
-	const duoRaw = kind === 'dark' ? settings.darkDuoColor : settings.lightDuoColor;
+	for (const kind of ['dark', 'light'] as const) {
+		const unoRaw = kind === 'dark' ? settings.darkUnoColor : settings.lightUnoColor;
+		const duoRaw = kind === 'dark' ? settings.darkDuoColor : settings.lightDuoColor;
 
-	if (!unoRaw || !duoRaw) {
-		return;
+		if (!unoRaw || !duoRaw) {
+			continue;
+		}
+
+		let uno: Color;
+		let duo: Color;
+		try {
+			uno = parseColor(unoRaw);
+			duo = parseColor(duoRaw);
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : String(e);
+			vscode.window.showErrorMessage(`Duotone Vary: Invalid ${kind} color — ${msg}`);
+			continue;
+		}
+
+		const palette = generatePalette(uno, duo, kind);
+		await applyPalette(palette, kind, extensionPath);
 	}
-
-	let uno: Color;
-	let duo: Color;
-	try {
-		uno = parseColor(unoRaw);
-		duo = parseColor(duoRaw);
-	} catch (e) {
-		const msg = e instanceof Error ? e.message : String(e);
-		vscode.window.showErrorMessage(`Duotone Vary: Invalid color — ${msg}`);
-		return;
-	}
-
-	const palette = generatePalette(uno, duo, kind);
-	await applyPalette(palette, kind, settings.settingsTarget);
 }
 
-const debouncedRegenerate = debounce(() => { void regenerate(); }, 200);
-
 export function activate(context: vscode.ExtensionContext) {
+	const extensionPath = context.extensionPath;
+	const debouncedRegenerate = debounce(() => { void regenerate(extensionPath); }, 200);
+
 	// Apply on startup
-	void regenerate();
+	void regenerate(extensionPath);
 
 	// Re-apply when settings change
 	context.subscriptions.push(
@@ -77,7 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// Manual regenerate command
 	context.subscriptions.push(
 		vscode.commands.registerCommand('duotone-vary.regenerate', () => {
-			void regenerate();
+			void regenerate(extensionPath);
 		}),
 	);
 }
