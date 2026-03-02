@@ -2,35 +2,59 @@ import type { PaletteHex, ThemeKind, TokenColorRule } from './types.js';
 
 export function buildTokenColors(palette: PaletteHex): TokenColorRule[] {
 	return [
-		// Uno[0]: constants & strings — concrete values you scan for
 		{
-			scope: ['string', 'constant.numeric', 'constant.language', 'constant.character'],
-			settings: { foreground: palette.uno[0] },
-		},
-		// Uno[1]: comments — deserve visibility, not grey burial
-		{
-			scope: ['comment', 'punctuation.definition.comment'],
-			settings: { foreground: palette.uno[1] },
-		},
-		// Duo[0]: definitions — names at declaration sites
-		{
-			scope: [
-				'entity.name.function',
-				'entity.name.type',
-				'entity.name.class',
-				'entity.name.tag',
+			// "name": "Comments",
+			"scope": [
+				"comment",
+				"punctuation.definition.comment"
 			],
-			settings: { foreground: palette.duo[0] },
+			"settings": {
+				"foreground": palette.duo[0]
+			}
 		},
-		// Duo[1]: attributes & properties at definition
 		{
-			scope: ['entity.other.attribute-name', 'support.type', 'variable.other.constant'],
-			settings: { foreground: palette.duo[1] },
+			// "name": "Strings",
+			"scope": [
+				"string",
+				"string.regexp",
+				"constant.other.symbol"
+			],
+			"settings": {
+				"foreground": palette.uno[0]
+			}
 		},
-		// Uno[4]: dimmed punctuation — separate names from syntax
 		{
-			scope: ['punctuation'],
-			settings: { foreground: palette.uno[4] },
+			// "name": "Strings: Escape Sequences",
+			"scope": "constant.character.escape",
+			"settings": {
+				"foreground": palette.uno[1]
+			}
+		},
+		{
+			// "name": "Numbers, Characters",
+			"scope": [
+				"constant.numeric",
+				"constant.character",
+				"constant.keyword",
+				"constant"
+			],
+			"settings": {
+				"foreground": palette.uno[2]
+			}
+		},
+		{
+			// "name": "Global definitions",
+			"scope": "entity.name",
+			"settings": {
+				"foreground": palette.duo[1]
+			}
+		},
+		{
+			// "name": "Invalid",
+			"scope": "invalid",
+			"settings": {
+				"foreground": palette.uno[4]
+			}
 		},
 	];
 }
@@ -40,8 +64,8 @@ export function buildWorkbenchColors(palette: PaletteHex, _kind: ThemeKind): Rec
 		// Interactive accent: duo[0]
 		'tab.activeBorderTop': palette.duo[0],
 		'activityBarBadge.background': palette.duo[0],
-		'badge.background': palette.duo[0],
-		'button.background': palette.duo[0],
+		// 'badge.background': palette.duo[0],
+		// 'button.background': palette.duo[0],
 		'focusBorder': palette.duo[0],
 		'inputOption.activeBorder': palette.duo[0],
 		'panelTitle.activeBorder': palette.duo[0],
