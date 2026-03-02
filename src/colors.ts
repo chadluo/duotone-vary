@@ -12,10 +12,10 @@ import Color from 'colorjs.io';
 import type { PaletteHex, ThemeKind } from './types.js';
 
 // Endpoint colors matching the original duotone themes
-const DARK_WHITE = new Color('hsl', [250, 0, 100]);
-const DARK_BG = new Color('hsl', [250, 12, 18]);
-const LIGHT_BLACK = new Color('hsl', [30, 0, 0]);
-const LIGHT_BG = new Color('hsl', [30, 16, 98]);
+const DARK_WHITE = new Color("#CCCCCC");
+const DARK_BG = new Color('#1F1F1F');
+const LIGHT_BLACK = new Color("#3B3B3B");
+const LIGHT_BG = new Color("#FFFFFF");
 
 function toHex(c: Color): string {
 	return c.to('srgb').toString({ format: 'hex' });
