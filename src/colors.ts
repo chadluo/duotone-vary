@@ -11,14 +11,19 @@ see https://github.com/simurai/duotone-light-syntax/blob/master/lib/duotone.coff
 import Color from 'colorjs.io';
 import type { PaletteHex, ThemeKind } from './types.js';
 
-// Endpoint colors matching the original duotone themes
 const DARK_WHITE = new Color("#CCCCCC");
 const DARK_BG = new Color('#1F1F1F');
 const LIGHT_BLACK = new Color("#3B3B3B");
 const LIGHT_BG = new Color("#FFFFFF");
 
 function toHex(c: Color): string {
-	return c.to('srgb').toString({ format: 'hex' });
+	const hex = c.to('srgb').toString({ format: 'hex' });
+	// Expand 4-char shorthand (#RGB) to 7-char (#RRGGBB) so alpha suffixes work
+	if (hex.length === 4) {
+		const [, r, g, b] = hex;
+		return `#${r}${r}${g}${g}${b}${b}`;
+	}
+	return hex;
 }
 
 /** Mix two colors in Lab space (chroma.js default). */
