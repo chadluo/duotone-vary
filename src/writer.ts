@@ -1,38 +1,45 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as vscode from 'vscode';
 import { buildTokenColors, buildWorkbenchColors } from './scopes.js';
 import type { PaletteHex, ThemeKind } from './types.js';
 
-const themeFiles: Record<ThemeKind, string> = {
-	dark: 'duotone-vary-dark.json',
-	light: 'duotone-vary-light.json',
-};
+function resolveTarget(setting: 'user' | 'workspace'): vscode.ConfigurationTarget {
+	if (setting === 'workspace') {
+		if (!vscode.workspace.workspaceFolders?.length) {
+			vscode.window.showWarningMessage(
+				'Duotone Vary: No workspace open, falling back to user settings.'
+			);
+			return vscode.ConfigurationTarget.Global;
+		}
+		return vscode.ConfigurationTarget.Workspace;
+	}
+	return vscode.ConfigurationTarget.Global;
+}
 
 export async function applyPalette(
 	palette: PaletteHex,
 	kind: ThemeKind,
-	extensionPath: string,
+	target: 'user' | 'workspace',
 ): Promise<void> {
-	const themePath = path.join(extensionPath, 'themes', themeFiles[kind]);
-	const raw = await fs.promises.readFile(themePath, 'utf-8');
-	// Strip JS-style comments before parsing (theme files use JSONC)
-	const theme = JSON.parse(
-		raw.replace(/^\s*\/\/.*$/gm, '').replace(/,(\s*[}\]])/g, '$1'),
-	);
+	const configTarget = resolveTarget(target);
+	const config = vscode.workspace.getConfiguration();
 
-	theme._palette = {
-		uno: palette.uno,
-		duo: palette.duo,
+	// Merge token color customizations
+	const existingToken = config.get<Record<string, unknown>>('editor.tokenColorCustomizations') ?? {};
+	const tokenColors = {
+		...existingToken,
+		textMateRules: buildTokenColors(palette),
 	};
-	theme.tokenColors = buildTokenColors(palette);
-	theme.colors = {
-		...theme.colors,
+	await config.update('editor.tokenColorCustomizations', tokenColors, configTarget);
+
+	// Merge workbench color customizations
+	const existingWorkbench = config.get<Record<string, string>>('workbench.colorCustomizations') ?? {};
+	const workbenchColors = {
+		...existingWorkbench,
 		...buildWorkbenchColors(palette, kind),
 	};
+	await config.update('workbench.colorCustomizations', workbenchColors, configTarget);
 
-	await fs.promises.writeFile(
-		themePath,
-		JSON.stringify(theme, null, '\t') + '\n',
-		'utf-8',
-	);
+	// Set preferred color themes so auto dark/light mode picks up Duotone Vary
+	await config.update('workbench.preferredDarkColorTheme', 'Duotone Vary Dark', configTarget);
+	await config.update('workbench.preferredLightColorTheme', 'Duotone Vary Light', configTarget);
 }
