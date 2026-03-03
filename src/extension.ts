@@ -1,17 +1,8 @@
-// @ts-expect-error TS1479: colorjs.io is ESM-only; esbuild handles bundling
-import Color from 'colorjs.io';
 import * as vscode from 'vscode';
 import { generatePalette } from './colors.js';
 import { parseColor, readSettings } from './settings.js';
-import type { ThemeKind } from './types.js';
+import type { PaletteHex } from './types.js';
 import { applyPalette } from './writer.js';
-
-function detectThemeKind(): ThemeKind {
-	const kind = vscode.window.activeColorTheme.kind;
-	return (kind === vscode.ColorThemeKind.Light || kind === vscode.ColorThemeKind.HighContrastLight)
-		? 'light'
-		: 'dark';
-}
 
 function debounce<T extends (...args: never[]) => void>(fn: T, ms: number): T {
 	let timer: ReturnType<typeof setTimeout> | undefined;
@@ -29,27 +20,32 @@ async function regenerate(): Promise<void> {
 		return;
 	}
 
-	const kind = detectThemeKind();
-	const unoRaw = kind === 'dark' ? settings.darkUnoColor : settings.lightUnoColor;
-	const duoRaw = kind === 'dark' ? settings.darkDuoColor : settings.lightDuoColor;
+	let darkPalette: PaletteHex | null = null;
+	let lightPalette: PaletteHex | null = null;
 
-	if (!unoRaw || !duoRaw) {
+	if (settings.darkUnoColor && settings.darkDuoColor) {
+		try {
+			darkPalette = generatePalette(parseColor(settings.darkUnoColor), parseColor(settings.darkDuoColor), 'dark');
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : String(e);
+			vscode.window.showErrorMessage(`Duotone Vary: Invalid dark color — ${msg}`);
+		}
+	}
+
+	if (settings.lightUnoColor && settings.lightDuoColor) {
+		try {
+			lightPalette = generatePalette(parseColor(settings.lightUnoColor), parseColor(settings.lightDuoColor), 'light');
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : String(e);
+			vscode.window.showErrorMessage(`Duotone Vary: Invalid light color — ${msg}`);
+		}
+	}
+
+	if (!darkPalette && !lightPalette) {
 		return;
 	}
 
-	let uno: Color;
-	let duo: Color;
-	try {
-		uno = parseColor(unoRaw);
-		duo = parseColor(duoRaw);
-	} catch (e) {
-		const msg = e instanceof Error ? e.message : String(e);
-		vscode.window.showErrorMessage(`Duotone Vary: Invalid color — ${msg}`);
-		return;
-	}
-
-	const palette = generatePalette(uno, duo, kind);
-	await applyPalette(palette, kind, settings.settingsTarget);
+	await applyPalette(darkPalette, lightPalette, settings.settingsTarget);
 }
 
 const debouncedRegenerate = debounce(() => { void regenerate(); }, 200);

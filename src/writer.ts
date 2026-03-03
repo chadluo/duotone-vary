@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { buildTokenColors, buildWorkbenchColors } from './scopes.js';
-import type { PaletteHex, ThemeKind } from './types.js';
+import { buildTokenColors } from './scopes.js';
+import type { PaletteHex } from './types.js';
 
 function resolveTarget(setting: 'user' | 'workspace'): vscode.ConfigurationTarget {
 	if (setting === 'workspace') {
@@ -16,28 +16,23 @@ function resolveTarget(setting: 'user' | 'workspace'): vscode.ConfigurationTarge
 }
 
 export async function applyPalette(
-	palette: PaletteHex,
-	kind: ThemeKind,
+	darkPalette: PaletteHex | null,
+	lightPalette: PaletteHex | null,
 	target: 'user' | 'workspace',
 ): Promise<void> {
 	const configTarget = resolveTarget(target);
 	const config = vscode.workspace.getConfiguration();
 
-	// Merge token color customizations
+	// Build per-theme token color customizations
 	const existingToken = config.get<Record<string, unknown>>('editor.tokenColorCustomizations') ?? {};
-	const tokenColors = {
-		...existingToken,
-		textMateRules: buildTokenColors(palette),
-	};
+	const tokenColors: Record<string, unknown> = { ...existingToken };
+	if (darkPalette) {
+		tokenColors['[Duotone Vary Dark]'] = { textMateRules: buildTokenColors(darkPalette) };
+	}
+	if (lightPalette) {
+		tokenColors['[Duotone Vary Light]'] = { textMateRules: buildTokenColors(lightPalette) };
+	}
 	await config.update('editor.tokenColorCustomizations', tokenColors, configTarget);
-
-	// Merge workbench color customizations
-	const existingWorkbench = config.get<Record<string, string>>('workbench.colorCustomizations') ?? {};
-	const workbenchColors = {
-		...existingWorkbench,
-		...buildWorkbenchColors(palette, kind),
-	};
-	await config.update('workbench.colorCustomizations', workbenchColors, configTarget);
 
 	// Set preferred color themes so auto dark/light mode picks up Duotone Vary
 	await config.update('workbench.preferredDarkColorTheme', 'Duotone Vary Dark', configTarget);
