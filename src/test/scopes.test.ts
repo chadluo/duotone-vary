@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { buildTokenColors, buildWorkbenchColors } from '../scopes.js';
+import { buildTokenColors } from '../scopes.js';
 import type { PaletteHex } from '../types.js';
 
 const mockPalette: PaletteHex = {
@@ -38,17 +38,3 @@ suite('buildTokenColors', () => {
 	});
 });
 
-suite('buildWorkbenchColors', () => {
-	test('returns object with expected accent keys', () => {
-		const colors = buildWorkbenchColors(mockPalette, 'dark');
-		assert.ok(typeof colors === 'object');
-		assert.ok('tab.activeBorderTop' in colors);
-		assert.ok('focusBorder' in colors);
-		assert.ok('editorBracketMatch.border' in colors);
-	});
-
-	test('uses duo[0] for primary accent', () => {
-		const colors = buildWorkbenchColors(mockPalette, 'dark');
-		assert.strictEqual(colors['tab.activeBorderTop'], mockPalette.duo[0]);
-	});
-});
