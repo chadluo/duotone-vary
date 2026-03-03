@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import { buildTokenColors } from './scopes.js';
 import type { PaletteHex } from './types.js';
 
+const DARK_THEME = 'Duotone Vary Dark';
+const LIGHT_THEME = 'Duotone Vary Light';
+
 function resolveTarget(setting: 'user' | 'workspace'): vscode.ConfigurationTarget {
 	if (setting === 'workspace') {
 		if (!vscode.workspace.workspaceFolders?.length) {
@@ -27,14 +30,14 @@ export async function applyPalette(
 	const existingToken = config.get<Record<string, unknown>>('editor.tokenColorCustomizations') ?? {};
 	const tokenColors: Record<string, unknown> = { ...existingToken };
 	if (darkPalette) {
-		tokenColors['[Duotone Vary Dark]'] = { textMateRules: buildTokenColors(darkPalette) };
+		tokenColors[`[${DARK_THEME}]`] = { textMateRules: buildTokenColors(darkPalette) };
 	}
 	if (lightPalette) {
-		tokenColors['[Duotone Vary Light]'] = { textMateRules: buildTokenColors(lightPalette) };
+		tokenColors[`[${LIGHT_THEME}]`] = { textMateRules: buildTokenColors(lightPalette) };
 	}
-	await config.update('editor.tokenColorCustomizations', tokenColors, configTarget);
-
-	// Set preferred color themes so auto dark/light mode picks up Duotone Vary
-	await config.update('workbench.preferredDarkColorTheme', 'Duotone Vary Dark', configTarget);
-	await config.update('workbench.preferredLightColorTheme', 'Duotone Vary Light', configTarget);
+	await Promise.all([
+		config.update('editor.tokenColorCustomizations', tokenColors, configTarget),
+		config.update('workbench.preferredDarkColorTheme', DARK_THEME, configTarget),
+		config.update('workbench.preferredLightColorTheme', LIGHT_THEME, configTarget),
+	]);
 }

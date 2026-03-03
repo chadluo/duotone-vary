@@ -14,32 +14,28 @@ function debounce<T extends (...args: never[]) => void>(fn: T, ms: number): T {
 	}) as unknown as T;
 }
 
+function tryBuildPalette(unoColor: string, duoColor: string, kind: 'dark' | 'light'): PaletteHex | null {
+	try {
+		return generatePalette(parseColor(unoColor), parseColor(duoColor), kind);
+	} catch (e) {
+		const msg = e instanceof Error ? e.message : String(e);
+		vscode.window.showErrorMessage(`Duotone Vary: Invalid ${kind} color — ${msg}`);
+		return null;
+	}
+}
+
 async function regenerate(): Promise<void> {
 	const settings = readSettings();
 	if (!settings) {
 		return;
 	}
 
-	let darkPalette: PaletteHex | null = null;
-	let lightPalette: PaletteHex | null = null;
-
-	if (settings.darkUnoColor && settings.darkDuoColor) {
-		try {
-			darkPalette = generatePalette(parseColor(settings.darkUnoColor), parseColor(settings.darkDuoColor), 'dark');
-		} catch (e) {
-			const msg = e instanceof Error ? e.message : String(e);
-			vscode.window.showErrorMessage(`Duotone Vary: Invalid dark color — ${msg}`);
-		}
-	}
-
-	if (settings.lightUnoColor && settings.lightDuoColor) {
-		try {
-			lightPalette = generatePalette(parseColor(settings.lightUnoColor), parseColor(settings.lightDuoColor), 'light');
-		} catch (e) {
-			const msg = e instanceof Error ? e.message : String(e);
-			vscode.window.showErrorMessage(`Duotone Vary: Invalid light color — ${msg}`);
-		}
-	}
+	const darkPalette = settings.darkUnoColor && settings.darkDuoColor
+		? tryBuildPalette(settings.darkUnoColor, settings.darkDuoColor, 'dark')
+		: null;
+	const lightPalette = settings.lightUnoColor && settings.lightDuoColor
+		? tryBuildPalette(settings.lightUnoColor, settings.lightDuoColor, 'light')
+		: null;
 
 	if (!darkPalette && !lightPalette) {
 		return;
