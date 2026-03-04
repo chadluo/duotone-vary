@@ -2,36 +2,28 @@ import type { PaletteHex, TokenColorRule } from './types.js';
 
 export function buildTokenColors(palette: PaletteHex): TokenColorRule[] {
 	return [
+
+		// uno
+
 		{
-			// "name": "Comments",
+			"name": "Comments",
 			"scope": [
 				"comment",
 				"punctuation.definition.comment"
-			],
-			"settings": {
-				"foreground": palette.duo[0]
-			}
-		},
-		{
-			// "name": "Strings",
-			"scope": [
-				"string",
-				"string.regexp",
-				"constant.other.symbol"
 			],
 			"settings": {
 				"foreground": palette.uno[0]
 			}
 		},
 		{
-			// "name": "Strings: Escape Sequences",
-			"scope": "constant.character.escape",
+			"name": "Global definitions",
+			"scope": "entity.name",
 			"settings": {
 				"foreground": palette.uno[1]
 			}
 		},
 		{
-			// "name": "Numbers, Characters",
+			"name": "Numbers, Characters",
 			"scope": [
 				"constant.numeric",
 				"constant.character",
@@ -42,18 +34,34 @@ export function buildTokenColors(palette: PaletteHex): TokenColorRule[] {
 				"foreground": palette.uno[2]
 			}
 		},
+
+		// duo
+
 		{
-			// "name": "Global definitions",
-			"scope": "entity.name",
+			"name": "Strings",
+			"scope": [
+				"string",
+				"string.regexp",
+				"constant.other.symbol"
+			],
+			"settings": {
+				"foreground": palette.duo[0]
+			}
+		},
+		{
+			"name": "Strings: Escape Sequences",
+			"scope": "constant.character.escape",
 			"settings": {
 				"foreground": palette.duo[1]
 			}
 		},
+		// constants
+
 		{
-			// "name": "Invalid",
+			"name": "Invalid",
 			"scope": "invalid",
 			"settings": {
-				"foreground": palette.uno[4]
+				"foreground": "red"
 			}
 		},
 	];

@@ -14,6 +14,7 @@ export interface ExtensionSettings {
 }
 
 export interface TokenColorRule {
+	name: string;
 	scope: string | string[];
 	settings: { foreground: string };
 }
