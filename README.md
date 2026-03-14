@@ -1,3 +1,5 @@
+<!-- markdownlint-disable no-inline-html -->
+
 # Duotone Vary
 
 A replicate of [Duotone color theme](https://github.com/simurai/duotone-dark-syntax) for vscode, where you choose two
