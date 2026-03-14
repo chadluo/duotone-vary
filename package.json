@@ -3,13 +3,14 @@
   "name": "duotone-vary",
   "displayName": "Duotone Vary",
   "description": "Duotone but you select the tone",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.109.0"
   },
   "categories": [
     "Other"
   ],
+  "icon": "images/DuotoneVary.png",
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -78,19 +79,19 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run package",
-    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
-    "watch": "npm-run-all -p watch:*",
-    "watch:esbuild": "node esbuild.js --watch",
-    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "check-types": "tsc --noEmit",
+    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "compile-tests": "tsc -p . --outDir out",
     "lint": "eslint src",
+    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "test": "vscode-test",
-    "vsce:package": "vsce package --no-dependencies --allow-missing-repository --no-rewrite-relative-links"
+    "vsce:package": "vsce package --no-dependencies --allow-missing-repository --no-rewrite-relative-links",
+    "vscode:prepublish": "pnpm run package",
+    "watch": "npm-run-all -p watch:*",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
