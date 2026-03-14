@@ -35,9 +35,5 @@ export async function applyPalette(
 	if (lightPalette) {
 		tokenColors[`[${LIGHT_THEME}]`] = { textMateRules: buildTokenColors(lightPalette) };
 	}
-	await Promise.all([
-		config.update('editor.tokenColorCustomizations', tokenColors, configTarget),
-		config.update('workbench.preferredDarkColorTheme', DARK_THEME, configTarget),
-		config.update('workbench.preferredLightColorTheme', LIGHT_THEME, configTarget),
-	]);
+	await config.update('editor.tokenColorCustomizations', tokenColors, configTarget);
 }
