@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// Re-apply when settings change
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeConfiguration((e) => {
-			if (e.affectsConfiguration('duotone-vary')) {
+			if (e.affectsConfiguration('duotoneVary')) {
 				debouncedRegenerate();
 			}
 		}),
@@ -68,7 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Manual regenerate command
 	context.subscriptions.push(
-		vscode.commands.registerCommand('duotone-vary.regenerate', () => {
+		vscode.commands.registerCommand('duotoneVary.regenerate', () => {
 			void regenerate();
 		}),
 	);

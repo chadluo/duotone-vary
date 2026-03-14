@@ -17,7 +17,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "duotone-vary.regenerate",
+        "command": "duotoneVary.regenerate",
         "title": "Duotone Vary: Regenerate Colors"
       }
     ],
@@ -36,7 +36,7 @@
     "configuration": {
       "title": "Duotone Vary",
       "properties": {
-        "duotone-vary.settingsTarget": {
+        "duotoneVary.settingsTarget": {
           "order": 0,
           "type": "string",
           "enum": [
@@ -50,29 +50,29 @@
           "default": "user",
           "description": "Where to write the generated color customizations."
         },
-        "duotone-vary.darkUnoColor": {
+        "duotoneVary.darkUnoColor": {
           "order": 1,
           "type": "string",
           "default": "",
-          "markdownDescription": "Dark theme primary (Uno) color. Accepts CSS OKLCH (`oklch(0.55 0.20 264)`) or hex RGB (`#4a90d9`)."
+          "markdownDescription": "Dark theme primary (Uno) color. Accepts CSS color values."
         },
-        "duotone-vary.darkDuoColor": {
+        "duotoneVary.darkDuoColor": {
           "order": 2,
           "type": "string",
           "default": "",
-          "markdownDescription": "Dark theme secondary/accent (Duo) color. Accepts CSS OKLCH or hex RGB."
+          "markdownDescription": "Dark theme secondary/accent (Duo) color. Accepts CSS color values."
         },
-        "duotone-vary.lightUnoColor": {
+        "duotoneVary.lightUnoColor": {
           "order": 3,
           "type": "string",
           "default": "",
-          "markdownDescription": "Light theme primary (Uno) color. Accepts CSS OKLCH (`oklch(0.55 0.20 264)`) or hex RGB (`#4a90d9`)."
+          "markdownDescription": "Light theme primary (Uno) color. Accepts CSS color values."
         },
-        "duotone-vary.lightDuoColor": {
+        "duotoneVary.lightDuoColor": {
           "order": 4,
           "type": "string",
           "default": "",
-          "markdownDescription": "Light theme secondary/accent (Duo) color. Accepts CSS OKLCH or hex RGB."
+          "markdownDescription": "Light theme secondary/accent (Duo) color. Accepts CSS color values."
         }
       }
     }

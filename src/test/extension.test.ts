@@ -4,6 +4,6 @@ import * as vscode from 'vscode';
 suite('Extension Test Suite', () => {
 	test('regenerate command is registered', async () => {
 		const commands = await vscode.commands.getCommands(true);
-		assert.ok(commands.includes('duotone-vary.regenerate'));
+		assert.ok(commands.includes('duotoneVary.regenerate'));
 	});
 });

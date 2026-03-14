@@ -9,7 +9,7 @@ export function parseColor(input: string): Color {
 }
 
 export function readSettings(): ExtensionSettings | null {
-	const config = vscode.workspace.getConfiguration('duotone-vary');
+	const config = vscode.workspace.getConfiguration('duotoneVary');
 	const darkUnoColor = config.get<string>('darkUnoColor', '');
 	const darkDuoColor = config.get<string>('darkDuoColor', '');
 	const lightUnoColor = config.get<string>('lightUnoColor', '');
