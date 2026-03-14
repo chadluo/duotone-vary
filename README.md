@@ -33,6 +33,8 @@ After installation, tweak the base colors in settings, for light/dark and uno/du
 }
 ```
 
+You can pick colors from [OKLCH Color Picker & Converter](https://oklch.com/)
+
 ## How it works: mix colors and overrides
 
 Typically vscode themes only change colors and don't touch settings, and extensions don't change colors. However vscode

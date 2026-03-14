@@ -3,6 +3,10 @@
   "name": "duotone-vary",
   "displayName": "Duotone Vary",
   "description": "Duotone but you select the tone",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chadluo/duotone-vary"
+  },
   "version": "1.0.0",
   "engines": {
     "vscode": "^1.109.0"
@@ -86,8 +90,8 @@
     "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "test": "vscode-test",
-    "vsce:package": "vsce package --no-dependencies --allow-missing-repository --no-rewrite-relative-links",
-    "vscode:prepublish": "pnpm run package",
+    "vsce:package": "vsce package --no-dependencies --no-rewrite-relative-links",
+    "vsce:publish": "vsce publish --no-dependencies",
     "watch": "npm-run-all -p watch:*",
     "watch-tests": "tsc -p . -w --outDir out",
     "watch:esbuild": "node esbuild.js --watch",
