@@ -12,7 +12,7 @@ import Color from 'colorjs.io';
 import type { PaletteHex, ThemeKind } from './types.js';
 
 const DARK_FOREGROUND = new Color("#CCCCCC");
-const DARK_BACKGROUND = new Color('#1F1F1F');
+const DARK_BACKGROUND = new Color("#1F1F1F");
 const LIGHT_FOREGROUND = new Color("#3B3B3B");
 const LIGHT_BACKGROUND = new Color("#FFFFFF");
 

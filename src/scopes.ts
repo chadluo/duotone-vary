@@ -19,19 +19,14 @@ export function buildTokenColors(palette: PaletteHex): TokenColorRule[] {
 			"settings": { "foreground": palette.uno[1] }
 		},
 		{
-			"name": "Punctuation",
-			"scope": "punctuation",
+			"name": "Strings: Escape Sequences",
+			"scope": "constant.character.escape",
 			"settings": { "foreground": palette.uno[2] }
 		},
 		{
 			"name": "Strings",
-			"scope": ["constant.other.symbol", "string", "string.regexp",],
+			"scope": ["constant.other.symbol", "string", "string.regexp", "punctuation"],
 			"settings": { "foreground": palette.uno[3] }
-		},
-		{
-			"name": "Strings: Escape Sequences",
-			"scope": "constant.character.escape",
-			"settings": { "foreground": palette.uno[4] }
 		},
 
 		// duo
