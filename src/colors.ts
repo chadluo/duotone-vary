@@ -11,10 +11,10 @@ see https://github.com/simurai/duotone-light-syntax/blob/master/lib/duotone.coff
 import Color from 'colorjs.io';
 import type { PaletteHex, ThemeKind } from './types.js';
 
-const DARK_WHITE = new Color("#CCCCCC");
-const DARK_BG = new Color('#1F1F1F');
-const LIGHT_BLACK = new Color("#3B3B3B");
-const LIGHT_BG = new Color("#FFFFFF");
+const DARK_FOREGROUND = new Color("#CCCCCC");
+const DARK_BACKGROUND = new Color('#1F1F1F');
+const LIGHT_FOREGROUND = new Color("#3B3B3B");
+const LIGHT_BACKGROUND = new Color("#FFFFFF");
 
 function toHex(c: Color): string {
 	const hex = c.to('srgb').toString({ format: 'hex' });
@@ -56,23 +56,23 @@ export function generatePalette(uno: Color, duo: Color, kind: ThemeKind): Palett
 	let duoColors: Color[];
 
 	if (kind === 'dark') {
-		const unoHigh = mix(uno, DARK_WHITE, 0.5);
+		const unoHigh = mix(uno, DARK_FOREGROUND, 0.5);
 		const unoMid = uno;
-		const unoLow = mix(uno, DARK_BG, 0.75);
+		const unoLow = mix(uno, DARK_BACKGROUND, 0.75);
 		unoColors = scale([unoHigh, unoMid, unoLow], 5);
 
 		const duoHigh = duo;
-		const duoLow = mix(duo, DARK_BG, 0.66);
+		const duoLow = mix(duo, DARK_BACKGROUND, 0.66);
 		duoColors = scale([duoHigh, duoLow], 3);
 	} else {
-		const unoHigh = mix(uno, LIGHT_BLACK, 0.3);
+		const unoHigh = mix(uno, LIGHT_FOREGROUND, 0.3);
 		const unoMid = uno;
-		const unoLow = mix(uno, LIGHT_BG, 0.6);
+		const unoLow = mix(uno, LIGHT_BACKGROUND, 0.6);
 		unoColors = scale([unoHigh, unoMid, unoLow], 5);
 
-		const duoHigh = mix(duo, LIGHT_BLACK, 0.5);
+		const duoHigh = mix(duo, LIGHT_FOREGROUND, 0.5);
 		const duoMid = duo;
-		const duoLow = mix(duo, LIGHT_BG, 0.6);
+		const duoLow = mix(duo, LIGHT_BACKGROUND, 0.6);
 		const duoFull = scale([duoHigh, duoMid, duoLow], 5);
 		duoColors = [duoFull[1], duoFull[2], duoFull[3]];
 	}
